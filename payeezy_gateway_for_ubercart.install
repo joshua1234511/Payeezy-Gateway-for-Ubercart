@@ -9,7 +9,7 @@
  * Implements hook_requirements().
  */
 function payeezy_gateway_for_ubercart_requirements($phase){
-   //Required Fields by Payeezy API.
+  // Required Fields by Payeezy API.
   variable_set('uc_credit_owner_enabled', TRUE);
   variable_set('uc_credit_type_enabled', TRUE);
   $t = get_t();
@@ -24,8 +24,8 @@ function payeezy_gateway_for_ubercart_requirements($phase){
             '!curl_url' => 'http://php.net/manual/en/curl.setup.php',
         ));
   }
-    return $requirements;
-}
+  return $requirements;
+} 
 
 /**
  * Implements hook_uninstall().
