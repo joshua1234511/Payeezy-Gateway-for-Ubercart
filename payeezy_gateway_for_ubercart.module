@@ -16,7 +16,7 @@ define('PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE', 'authorize');
  */
 function payeezy_gateway_for_ubercart_help($path, $arg) {
   switch ($path) {
-    case 'admin/help#Payeezy':
+    case 'admin/help#payeezy_gateway_for_ubercart':
 
       $filepath = dirname(__FILE__) . '/README.md';
       if (file_exists($filepath)) {
@@ -31,9 +31,9 @@ function payeezy_gateway_for_ubercart_help($path, $arg) {
       if (!isset($readme)) {
         return NULL;
       }
-      if (module_exists('payeezy_gateway_for_ubercart')) {
-        $filters = module_invoke('payeezy_gateway_for_ubercart', 'filter_info');
-        $info = $filters['filter_payeezy_gateway_for_ubercart'];
+      if (module_exists('markdown')) {
+        $filters = module_invoke('markdown', 'filter_info');
+        $info = $filters['filter_markdown'];
     
         if (function_exists($info['process callback'])) {
           $output = $info['process callback']($readme, NULL);
@@ -45,7 +45,6 @@ function payeezy_gateway_for_ubercart_help($path, $arg) {
       else {
         $output = '<pre>' . $readme . '</pre>';
       }
-
       return $output;
   }
 }
