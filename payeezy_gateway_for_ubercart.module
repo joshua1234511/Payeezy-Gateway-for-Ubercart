@@ -12,6 +12,44 @@ define('PAYEEZY_GATEWAY_FOR_UBERCART_LIVE_GATEWAY_URL', 'https://api.payeezy.com
 define('PAYEEZY_GATEWAY_FOR_UBERCART_PURCHASE', 'purchase');
 define('PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE', 'authorize');
 /**
+ * Implements hook_help().
+ */
+function payeezy_gateway_for_ubercart_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#Payeezy':
+
+      $filepath = dirname(__FILE__) . '/README.md';
+      if (file_exists($filepath)) {
+        $readme = file_get_contents($filepath);
+      }
+      else {
+        $filepath = dirname(__FILE__) . '/README.txt';
+        if (file_exists($filepath)) {
+          $readme = file_get_contents($filepath);
+        }
+      }
+      if (!isset($readme)) {
+        return NULL;
+      }
+      if (module_exists('payeezy_gateway_for_ubercart')) {
+        $filters = module_invoke('payeezy_gateway_for_ubercart', 'filter_info');
+        $info = $filters['filter_payeezy_gateway_for_ubercart'];
+    
+        if (function_exists($info['process callback'])) {
+          $output = $info['process callback']($readme, NULL);
+        }
+        else {
+          $output = '<pre>' . $readme . '</pre>';
+        }
+      }
+      else {
+        $output = '<pre>' . $readme . '</pre>';
+      }
+
+      return $output;
+  }
+}
+/**
  * Implements hook_uc_payment_gateway().
  */
 function payeezy_gateway_for_ubercart_uc_payment_gateway() {
