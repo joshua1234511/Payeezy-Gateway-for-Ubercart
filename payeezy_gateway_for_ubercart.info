@@ -1,1 +1,6 @@
-"name= Payeezy Gateway for Ubercart" 
+name = Payeezy
+description = Processes payments using Payeezy.
+dependencies[] = uc_payment
+dependencies[] = uc_credit
+package = Ubercart - payment
+core = 7.x
