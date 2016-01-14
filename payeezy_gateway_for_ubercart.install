@@ -15,15 +15,15 @@ function payeezy_gateway_for_ubercart_requirements($phase){
   $t = get_t();
   $has_curl = function_exists('curl_init');
   $requirements['payeezy_gateway_for_ubercart_curl'] = array(
-        'title' => $t('cURL'),
-        'value' => $has_curl ? $t('Enabled') : $t('Not found'),
-    );
-    if (!$has_curl) {
-      $requirements['payeezy_gateway_for_ubercart_curl']['severity']    = REQUIREMENT_ERROR;
-      $requirements['payeezy_gateway_for_ubercart_curl']['description'] = $t("Payeezy requires the PHP <a href='!curl_url'>cURL</a> library.", array(
+    'title' => $t('cURL'),
+    'value' => $has_curl ? $t('Enabled') : $t('Not found'),
+  );
+  if(!$has_curl) {
+  $requirements['payeezy_gateway_for_ubercart_curl']['severity']    = REQUIREMENT_ERROR;
+  $requirements['payeezy_gateway_for_ubercart_curl']['description'] = $t("Payeezy requires the PHP <a href='!curl_url'>cURL</a> library.", array(
             '!curl_url' => 'http://php.net/manual/en/curl.setup.php',
         ));
-    }   
+    }
     return $requirements;
 }
 
@@ -33,11 +33,11 @@ function payeezy_gateway_for_ubercart_requirements($phase){
 function payeezy_gateway_for_ubercart_uninstall(){
   // Delete related variables all at once.
   db_delete('variable')->condition('name', 'payeezy_gateway_for_ubercart_%', 'LIKE')->execute();
-}
+} 
 
 /**
  * Implements hook_update_last_removed().
  */
 function payeezy_gateway_for_ubercart_update_last_removed(){
   return 3;
-}
+} 
