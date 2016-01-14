@@ -4,10 +4,11 @@
  * Processes payments using Payeezy.
  *
  */
-
 define('PAYEEZY_GATEWAY_FOR_UBERCART_TEST_GATEWAY_URL', 'https://api-cert.payeezy.com/v1/transactions');
 define('PAYEEZY_GATEWAY_FOR_UBERCART_LIVE_GATEWAY_URL', 'https://api.payeezy.com/v1/transactions');
-/** Purchase payload for a credit card transaction. */
+/** 
+*Purchase payload for a credit card transaction.
+ */
 define('PAYEEZY_GATEWAY_FOR_UBERCART_PURCHASE', 'purchase');
 define('PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE', 'authorize');
 /**
@@ -101,14 +102,17 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   $apisecret  = trim(variable_get('payeezy_gateway_for_ubercart_api_secret_key', ''));
   $token      = trim(variable_get('payeezy_gateway_for_ubercart_api_reporting_key', ''));
   $nonce      = strval(hexdec(bin2hex(openssl_random_pseudo_bytes(4, $cstrong))));
-  $timestamp  = strval(time() * 1000); 
-  // time stamp in milli seconds.
+  $timestamp  = strval(time() * 1000);
+  // Time stamp in milli seconds.
   function process_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return strval($data);
   }
+  /**
+   * Callback for set primary tx pay load.
+   */
   function set_primary_tx_pay_load($order, $amount, $data) {
     $card_holder_name = $card_number = $card_type = $card_cvv = $card_expiry = $currency_code = $merchant_ref = "";
     $card_holder_name = process_input($order->payment_details['cc_owner']);
@@ -129,9 +133,12 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
       "card_expiry" => $card_expiry,
       "merchant_ref" => $merchant_ref,
       "currency_code" => $currency_code,
-      );
+    );
     return $primary_tx_pay_load;
   }
+  /**
+   * Callback for get pay load.
+   */
   function get_pay_load($args = array()) {
     $args = array_merge(array(
         "amount" => "",
@@ -152,18 +159,18 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
       $gateway_type = PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE;
     }
     $data = array(
-        'merchant_ref' => $args['merchant_ref'],
-        'transaction_type' => $gateway_type,
-        'method' => 'credit_card',
-        'amount' => $args['amount'],
-        'currency_code' => strtoupper($args['currency_code']),
-        'credit_card' => array(
-          'type' => $args['card_type'],
-          'cardholder_name' => $args['card_holder_name'],
-          'card_number' => $args['card_number'],
-          'exp_date' => $args['card_expiry'],
-          'cvv' => $args['card_cvv'],
-        ),
+      'merchant_ref' => $args['merchant_ref'],
+      'transaction_type' => $gateway_type,
+      'method' => 'credit_card',
+      'amount' => $args['amount'],
+      'currency_code' => strtoupper($args['currency_code']),
+      'credit_card' => array(
+        'type' => $args['card_type'],
+        'cardholder_name' => $args['card_holder_name'],
+        'card_number' => $args['card_number'],
+        'exp_date' => $args['card_expiry'],
+        'cvv' => $args['card_cvv'],
+      ),
     );
     return json_encode($data, JSON_FORCE_OBJECT);
   }
