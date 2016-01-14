@@ -2,12 +2,12 @@
 /**
  * @file
  * Processes payments using Payeezy.
- *
  */
+
 define('PAYEEZY_GATEWAY_FOR_UBERCART_TEST_GATEWAY_URL', 'https://api-cert.payeezy.com/v1/transactions');
 define('PAYEEZY_GATEWAY_FOR_UBERCART_LIVE_GATEWAY_URL', 'https://api.payeezy.com/v1/transactions');
-/** 
-*Purchase payload for a credit card transaction.
+/**
+* Purchase payload for a credit card transaction.
  */
 define('PAYEEZY_GATEWAY_FOR_UBERCART_PURCHASE', 'purchase');
 define('PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE', 'authorize');
@@ -102,8 +102,11 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   $apisecret  = trim(variable_get('payeezy_gateway_for_ubercart_api_secret_key', ''));
   $token      = trim(variable_get('payeezy_gateway_for_ubercart_api_reporting_key', ''));
   $nonce      = strval(hexdec(bin2hex(openssl_random_pseudo_bytes(4, $cstrong))));
-  $timestamp  = strval(time() * 1000);
   // Time stamp in milli seconds.
+  $timestamp  = strval(time() * 1000);
+  /**
+   * Callback for process input.
+   */
   function process_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
