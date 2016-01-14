@@ -24,8 +24,8 @@ function payeezy_gateway_for_ubercart_uc_payment_gateway()
         'settings' => 'payeezy_gateway_for_ubercart_settings_form',
         'credit' => 'payeezy_gateway_for_ubercart_charge',
         'credit_txn_types' => array(
-            UC_CREDIT_AUTH_CAPTURE
-        )
+            UC_CREDIT_AUTH_CAPTURE,
+        ),
     );
     
     return $gateways;
@@ -43,32 +43,32 @@ function payeezy_gateway_for_ubercart_settings_form()
     $form['api_id_key']                                    = array(
         '#type' => 'fieldset',
         '#title' => t('API Key, API Secret and Reporting Token'),
-        '#description' => t('This information is required for Ubercart to interact with your payment gateway account.  It is different from your login ID and password and may be found through your account settings page.  Do not change the gateway URLs unless you are using this module with an Payeezy-compatible gateway that requires different URLs.')
+        '#description' => t('This information is required for Ubercart to interact with your payment gateway account.  It is different from your login ID and password and may be found through your account settings page.  Do not change the gateway URLs unless you are using this module with an Payeezy-compatible gateway that requires different URLs.'),
     );
     $form['api_id_key']['payeezy_gateway_for_ubercart_api_key']              = array(
         '#type' => 'textfield',
         '#title' => t('API Key'),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_key', '')
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_key', ''),
     );
     $form['api_id_key']['payeezy_gateway_for_ubercart_api_secret_key']       = array(
         '#type' => 'textfield',
         '#title' => t('API Secret'),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_secret_key', '')
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_secret_key', ''),
     );
     $form['api_id_key']['payeezy_gateway_for_ubercart_api_reporting_key']    = array(
         '#type' => 'textfield',
         '#title' => t('Reporting Token'),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_reporting_key', '')
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_reporting_key', ''),
     );
     $form['api_id_key']['payeezy_gateway_for_ubercart_api_test_gateway_url'] = array(
         '#type' => 'textfield',
         '#title' => t('Payeezy Test Gateway URL'),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_test_gateway_url', PAYEEZY_GATEWAY_FOR_UBERCART_TEST_GATEWAY_URL)
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_test_gateway_url', PAYEEZY_GATEWAY_FOR_UBERCART_TEST_GATEWAY_URL),
     );
     $form['api_id_key']['payeezy_gateway_for_ubercart_api_live_gateway_url'] = array(
         '#type' => 'textfield',
         '#title' => t('Payeezy Live Gateway URL'),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_live_gateway_url', PAYEEZY_GATEWAY_FOR_UBERCART_LIVE_GATEWAY_URL)
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_api_live_gateway_url', PAYEEZY_GATEWAY_FOR_UBERCART_LIVE_GATEWAY_URL),
     );
     $form['payeezy_settings']['payeezy_gateway_for_ubercart_txn_mode']       = array(
         '#type' => 'radios',
@@ -76,18 +76,18 @@ function payeezy_gateway_for_ubercart_settings_form()
         '#description' => t('Only specify a developer test account if you login to your account through https://developer.payeezy.com.<br />Adjust to live transactions when you are ready to start processing real payments.'),
         '#options' => array(
             'live' => t('Live transactions in a live account'),
-            'developer_test' => t('Developer test account transactions')
+            'developer_test' => t('Developer test account transactions'),
         ),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_txn_mode', 'developer_test')
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_txn_mode', 'developer_test'),
     );
     $form['payeezy_settings']['payeezy_gateway_for_ubercart_txn_type']       = array(
         '#type' => 'radios',
         '#title' => t('Transaction Type'),
         '#options' => array(
             'purchase' => t('Purchase Type'),
-            'authorize' => t('Authorize Type')
+            'authorize' => t('Authorize Type'),
         ),
-        '#default_value' => variable_get('payeezy_gateway_for_ubercart_txn_type', 'purchase')
+        '#default_value' => variable_get('payeezy_gateway_for_ubercart_txn_type', 'purchase'),
     );
     return $form;
 }
@@ -114,33 +114,32 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data)
     }
     
     
-    $serviceURL = $post_url;
-    $apiKey     = trim(variable_get('payeezy_gateway_for_ubercart_api_key', ''));
-    $apiSecret  = trim(variable_get('payeezy_gateway_for_ubercart_api_secret_key', ''));
+    $serviceurl = $post_url;
+    $apikey     = trim(variable_get('payeezy_gateway_for_ubercart_api_key', ''));
+    $apisecret  = trim(variable_get('payeezy_gateway_for_ubercart_api_secret_key', ''));
     $token      = trim(variable_get('payeezy_gateway_for_ubercart_api_reporting_key', ''));
     $nonce      = strval(hexdec(bin2hex(openssl_random_pseudo_bytes(4, $cstrong))));
     $timestamp  = strval(time() * 1000); //time stamp in milli seconds
-    function processInput($data)
-    {
+    function process_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
         $data = htmlspecialchars($data);
         return strval($data);
     }
-    function setPrimaryTxPayload($order, $amount, $data)
+    function set_primary_tx_pay_load($order, $amount, $data)
     {
         
-        $card_holder_name = $card_number = $card_type = $card_cvv = $card_expiry = $currency_code = $merchant_ref = "";
-        $card_holder_name = processInput($order->payment_details['cc_owner']);
-        $card_number      = processInput($order->payment_details['cc_number']);
-        $card_type        = processInput($order->payment_details['cc_type']);
-        $card_cvv         = processInput($order->payment_details['cc_cvv']);
-        $card_expiry      = processInput(sprintf("%02d", $order->payment_details['cc_exp_month']) . substr($order->payment_details['cc_exp_year'], 2, 2));
-        $temp             = explode('.', uc_currency_format($amount, FALSE, FALSE, '.'));
-        $amount           = processInput($temp[0] . $temp[1]);
-        $currency_code    = processInput("USD");
-        $merchant_ref     = processInput("SureShot Books");
-        $primaryTxPayload = array(
+      $card_holder_name = $card_number = $card_type = $card_cvv = $card_expiry = $currency_code = $merchant_ref = "";
+      $card_holder_name = process_input($order->payment_details['cc_owner']);
+      $card_number      = process_input($order->payment_details['cc_number']);
+      $card_type        = process_input($order->payment_details['cc_type']);
+      $card_cvv         = process_input($order->payment_details['cc_cvv']);
+      $card_expiry      = process_input(sprintf("%02d", $order->payment_details['cc_exp_month']) . substr($order->payment_details['cc_exp_year'], 2, 2));
+      $temp             = explode('.', uc_currency_format($amount, FALSE, FALSE, '.'));
+      $amount           = process_input($temp[0] . $temp[1]);
+      $currency_code    = process_input("USD");
+      $merchant_ref     = process_input("SureShot Books");
+      $primary_tx_pay_load = array(
             "amount" => $amount,
             "card_number" => $card_number,
             "card_type" => $card_type,
@@ -150,9 +149,9 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data)
             "merchant_ref" => $merchant_ref,
             "currency_code" => $currency_code
         );
-        return $primaryTxPayload;
+        return $primary_tx_pay_load;
     }
-    function getPayload($args = array())
+    function get_pay_load($args = array())
     {
         $args         = array_merge(array(
             "amount" => "",
@@ -165,12 +164,12 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data)
             "currency_code" => "",
             "transaction_tag" => "",
             "split_shipment" => "",
-            "transaction_id" => ""
+            "transaction_id" => "",
         ), $args);
-        $data         = "";
-        $gateway_type = UC_CREDIT_PURCHASE;
-        if (variable_get('payeezy_gateway_for_ubercart_txn_type', 'purchase') == 'authorize') {
-            $gateway_type = UC_CREDIT_AUTH_ONLY;
+      $data         = "";
+      $gateway_type = UC_CREDIT_PURCHASE;
+      if (variable_get('payeezy_gateway_for_ubercart_txn_type', 'purchase') == 'authorize') {
+        $gateway_type = UC_CREDIT_AUTH_ONLY;
         }
         $data = array(
             'merchant_ref' => $args['merchant_ref'],
@@ -183,62 +182,61 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data)
                 'cardholder_name' => $args['card_holder_name'],
                 'card_number' => $args['card_number'],
                 'exp_date' => $args['card_expiry'],
-                'cvv' => $args['card_cvv']
+                'cvv' => $args['card_cvv'],
             )
         );
         
         return json_encode($data, JSON_FORCE_OBJECT);
     }
-    $payload       = getPayload(setPrimaryTxPayload($order, $amount, $data));
+    $payload       = get_pay_load(set_primary_tx_pay_load($order, $amount, $data));
     $data          = $apiKey . $nonce . $timestamp . $token . $payload;
     $hashAlgorithm = "sha256";
-    $hmac          = hash_hmac($hashAlgorithm, $data, $apiSecret, false);
+    $hmac          = hash_hmac($hashAlgorithm, $data, $apisecret, FALSE);
     $hmac_enc      = base64_encode($hmac);
     // Setup the cURL request.
-    $curl          = curl_init($serviceURL);
+    $curl          = curl_init($serviceurl);
     $headers       = array(
         'Content-Type: application/json',
-        'apikey:' . strval($apiKey),
+        'apikey:' . strval($apikey),
         'token:' . strval($token),
         'Authorization:' . $hmac_enc,
         'nonce:' . $nonce,
-        'timestamp:' . $timestamp
+        'timestamp:' . $timestamp,
     );
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, FALSE);
+    curl_setopt($curl, CURLOPT_POST, TRUE);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
-    curl_setopt($curl, CURLOPT_VERBOSE, true);
+    curl_setopt($curl, CURLOPT_VERBOSE, TRUE);
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     $json_response = curl_exec($curl);
     $status        = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    $response      = json_decode($json_response, true);
+    $response      = json_decode($json_response, TRUE);
     $result        = array();
     $status1 = FALSE;
     $comment = '';
     if ($status != 201) {
-        // Fail the charge with the reason text in the decline message.
-        $result = array(
+      // Fail the charge with the reason text in the decline message.
+      $result = array(
             'success' => FALSE,
             'message' => t('Credit card payment declined: @message', array(
-                '@message' => curl_error($curl)
+                '@message' => curl_error($curl),
             )),
             'uid' => $user->uid
         );
-        $response_type=$data['transaction_type'];
-        $response_status= t('Credit card payment declined: @message', array(
-                '@message' => curl_error($curl)));
-        $response_amount=uc_currency_format($amount);
-    }
-    
+        $response_type = $data['transaction_type'];
+        $response_status = t('Credit card payment declined: @message', array(
+                '@message' => curl_error($curl),));
+        $response_amount = uc_currency_format($amount);
+    } 
     else {
-        // Fail the charge with the reason text in the decline message.
-        $message = t('Type: @type<br />ID: @id', array(
+      // Fail the charge with the reason text in the decline message.
+      $message = t('Type: @type<br />ID: @id', array(
             '@type' => $response['transaction_type'],
-            '@id' => $response['transaction_id']
+            '@id' => $response['transaction_id'],
         ));
-        $result  = array(
+      $result  = array(
             'success' => TRUE,
             'comment' => $message,
             'message' => $message,
@@ -247,36 +245,36 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data)
                 'module' => 'payeezy_gateway_for_ubercart',
                 'txn_type' => $response['transaction_type'],
                 'txn_id' => $response['transaction_id'],
-                'txn_authcode' => $response['bank_resp_code']
+                'txn_authcode' => $response['bank_resp_code'],
             )
         );
         // If this was an authorization only transaction...
         if ($data['transaction_type'] == UC_CREDIT_AUTH_ONLY) {
-            // Log the authorization to the order.
-            uc_credit_log_authorization($order->order_id, $response['transaction_id'], $amount);
-        } elseif ($data['transaction_type'] == UC_CREDIT_PURCHASE) {
-            uc_credit_log_prior_auth_capture($order->order_id, $response['transaction_id']);
+          // Log the authorization to the order.
+          uc_credit_log_authorization($order->order_id, $response['transaction_id'], $amount);
+        }
+        elseif ($data['transaction_type'] == UC_CREDIT_PURCHASE) {
+          uc_credit_log_prior_auth_capture($order->order_id, $response['transaction_id']);
         }
         if ($response['validation_status'] === 'success') {
-        $status1 = TRUE;
+          $status1 = TRUE;
         }
         // Add the CVV response if enabled.
         if (variable_get('uc_credit_cvv_enabled', TRUE)) {
-        $comment .= '<br />' . t('CVV match: @cvv', array(
-            '@cvv' => _payeezy_gateway_for_ubercart_cvv($response['cvv2'])
-        ));
+          $comment .= '<br />' . t('CVV match: @cvv', array(
+            '@cvv' => _payeezy_gateway_for_ubercart_cvv($response['cvv2']),
+          ));
         }
-        $response_type=$response['transaction_type'];
-        $response_status=$response['transaction_status'];
-        $response_amount=uc_currency_format($response['amount']);
+        $response_type = $response['transaction_type'];
+        $response_status = $response['transaction_status'];
+        $response_amount = uc_currency_format($response['amount']);
     }
     // Don't log this as a payment money wasn't actually captured.
     if (in_array($data['transaction_type'], array(
-        UC_CREDIT_AUTH_ONLY
+        UC_CREDIT_AUTH_ONLY,
     ))) {
-        $result['log_payment'] = FALSE;
+      $result['log_payment'] = FALSE;
     }
-    
     curl_close($curl);
     
     $comment = t('<b>@type</b><br /><b>@status:</b> @message<br />Amount: @amount<br />', array(
@@ -294,27 +292,24 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data)
 /**
  * Returns the message text for a CVV match.
  */
-function _payeezy_gateway_for_ubercart_cvv($code)
-{
-    $text = $code . ' - ';
-    
-    switch ($code) {
-        case 'M':
+function _payeezy_gateway_for_ubercart_cvv($code) {
+  $text = $code . ' - '; 
+  switch ($code) {
+    case 'M':
             $text .= t('Match');
-            break;
+          break;
         case 'N':
             $text .= t('No Match');
-            break;
+          break;
         case 'P':
             $text .= t('Not Processed');
-            break;
+          break;
         case 'S':
             $text .= t('Should have been present');
-            break;
+          break;
         case 'U':
             $text .= t('Issuer unable to process request');
-            break;
+          break;
     }
-    
     return $text;
 }
