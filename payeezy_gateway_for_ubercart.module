@@ -234,7 +234,7 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
   curl_setopt($curl, CURLOPT_VERBOSE, TRUE);
   curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+  curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, TRUE);
   $json_response = curl_exec($curl);
   $status        = curl_getinfo($curl, CURLINFO_HTTP_CODE);
   $response      = json_decode($json_response, TRUE);
