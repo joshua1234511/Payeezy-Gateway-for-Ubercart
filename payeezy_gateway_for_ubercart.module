@@ -253,7 +253,7 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
     $response_type = $data['transaction_type'];
     $response_status = t('Credit card payment declined: @message', array(
       '@message' => curl_error($curl),
-            ));
+      ));
     $response_amount = uc_currency_format($amount);
   }
   else {
