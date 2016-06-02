@@ -180,17 +180,17 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
    */
   function get_pay_load($args = array()) {
     $args = array_merge(array(
-        "amount" => "",
-        "card_number" => "",
-        "card_type" => "",
-        "card_holder_name" => "",
-        "card_cvv" => "",
-        "card_expiry" => "",
-        "merchant_ref" => "",
-        "currency_code" => "",
-        "transaction_tag" => "",
-        "split_shipment" => "",
-        "transaction_id" => "",
+      "amount" => "",
+      "card_number" => "",
+      "card_type" => "",
+      "card_holder_name" => "",
+      "card_cvv" => "",
+      "card_expiry" => "",
+      "merchant_ref" => "",
+      "currency_code" => "",
+      "transaction_tag" => "",
+      "split_shipment" => "",
+      "transaction_id" => "",
     ), $args);
     $data         = "";
     $gateway_type = PAYEEZY_GATEWAY_FOR_UBERCART_PURCHASE;
@@ -252,15 +252,15 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
     );
     $response_type = $data['transaction_type'];
     $response_status = t('Credit card payment declined: @message', array(
-            '@message' => curl_error($curl),
+      '@message' => curl_error($curl),
             ));
     $response_amount = uc_currency_format($amount);
   }
   else {
     // Fail the charge with the reason text in the decline message.
     $message = t('Type: @type<br />ID: @id', array(
-        '@type' => $response['transaction_type'],
-        '@id' => $response['transaction_id'],
+      '@type' => $response['transaction_type'],
+      '@id' => $response['transaction_id'],
     ));
     $result  = array(
       'success' => TRUE,
