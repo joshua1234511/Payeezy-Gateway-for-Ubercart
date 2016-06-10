@@ -26,6 +26,7 @@ function payeezy_gateway_for_ubercart_requirements($phase) {
   }
   return $requirements;
 }
+
 /**
  * Implements hook_uninstall().
  */
@@ -33,6 +34,7 @@ function payeezy_gateway_for_ubercart_uninstall() {
   // Delete related variables all at once.
   db_delete('variable')->condition('name', 'payeezy_gateway_for_ubercart_%', 'LIKE')->execute();
 }
+
 /**
  * Implements hook_update_last_removed().
  */

@@ -14,6 +14,7 @@ define('PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE', 'authorize');
 /**
  * Implements hook_help().
  */
+
 function payeezy_gateway_for_ubercart_help($path, $arg) {
   switch ($path) {
     case 'admin/help#payeezy_gateway_for_ubercart':
@@ -47,6 +48,7 @@ function payeezy_gateway_for_ubercart_help($path, $arg) {
       return $output;
   }
 }
+
 /**
  * Implements hook_uc_payment_gateway().
  */
@@ -62,6 +64,7 @@ function payeezy_gateway_for_ubercart_uc_payment_gateway() {
   );
   return $gateways;
 }
+
 /**
  * Callback for payment gateway settings.
  */
@@ -117,6 +120,7 @@ function payeezy_gateway_for_ubercart_settings_form() {
   );
   return $form;
 }
+
 /**
  * Main handler for processing credit card transactions.
  */
@@ -143,12 +147,14 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   /**
    * Callback for process input.
    */
+
   function process_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return strval($data);
   }
+
   /**
    * Callback for set primary tx pay load.
    */
@@ -175,6 +181,7 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
     );
     return $primary_tx_pay_load;
   }
+
   /**
    * Callback for get pay load.
    */
@@ -213,6 +220,7 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
     );
     return json_encode($data, JSON_FORCE_OBJECT);
   }
+
   $payload       = get_pay_load(set_primary_tx_pay_load($order, $amount, $data));
   $data          = $apikey . $nonce . $timestamp . $token . $payload;
   $hash_algorithm = "sha256";
@@ -312,6 +320,7 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   uc_order_comment_save($order->order_id, $user->uid, $comment, 'admin');
   return $result;
 }
+
 /**
  * Returns the message text for a CVV match.
  */
