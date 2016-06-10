@@ -144,6 +144,7 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   $nonce      = strval(hexdec(bin2hex(openssl_random_pseudo_bytes(4, $cstrong))));
   // Time stamp in milli seconds.
   $timestamp  = strval(time() * 1000);
+  
   /**
    * Callback for process input.
    */
