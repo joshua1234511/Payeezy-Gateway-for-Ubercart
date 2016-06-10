@@ -11,10 +11,10 @@ define('PAYEEZY_GATEWAY_FOR_UBERCART_LIVE_GATEWAY_URL', 'https://api.payeezy.com
  */
 define('PAYEEZY_GATEWAY_FOR_UBERCART_PURCHASE', 'purchase');
 define('PAYEEZY_GATEWAY_FOR_UBERCART_AUTH_CAPTURE', 'authorize');
+
 /**
  * Implements hook_help().
  */
-
 function payeezy_gateway_for_ubercart_help($path, $arg) {
   switch ($path) {
     case 'admin/help#payeezy_gateway_for_ubercart':
@@ -144,10 +144,10 @@ function payeezy_gateway_for_ubercart_charge($order_id, $amount, $data) {
   $nonce      = strval(hexdec(bin2hex(openssl_random_pseudo_bytes(4, $cstrong))));
   // Time stamp in milli seconds.
   $timestamp  = strval(time() * 1000);
+  
   /**
    * Callback for process input.
    */
-
   function process_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
